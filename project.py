@@ -1,14 +1,16 @@
 #RSA em pequena escala
-#Usando num = alg
 
 # encrypter, p, q, decrypter, n,  message
 
+# Encontra divisores primos de um número n
 def findPrimeDivisors(n):
     primeDivisors = []
     for i in range(2, n+1):
         totalDiv = 0
         if n%i == 0:
-            for j in range(2, i):
+            #verifica se o numero é primo
+            for j in range(2, int(i**0.5)+1):
+                #para testar um número primo, precisamos apenas checar até a raiz quadrada do número
                 if i%j == 0:
                     totalDiv +=1        
             totalDiv +=2 #para não rodar desnecessariamente no 1 e no numero(ja sabemos que é divisível)
@@ -17,6 +19,7 @@ def findPrimeDivisors(n):
 
     return primeDivisors
 
+# Encontra p e q tais que n = p * q
 def calcP_Q(n):
     primeDivisors = findPrimeDivisors(n)
     primePair = []
@@ -29,6 +32,7 @@ def calcP_Q(n):
 
     return primePair
 
+# Calcula o valor de phi(n) = (p-1)(q-1)
 def phi(n):
     results = calcP_Q(n)
     
@@ -39,6 +43,8 @@ def phi(n):
 
     return phiResult
 
+# Calcula os valores de e que são coprimos com phi(n) e n
+# e deve ser menor que phi(n)
 def calc_e(n, phi_n):
     numeros = [i for i in range(2, n+1)]
 
@@ -51,7 +57,13 @@ def calc_e(n, phi_n):
         if i in numeros:
             numeros.remove(i)
 
+    #limpar listas desnecessárias, apagando da memória
+    del divisors_n
+    del divisors_phi_n
+
     listaRem = []
+
+    # Verifica se os números restantes são coprimos com phi(n)
     for i in numeros:
         divisors_i = findPrimeDivisors(i)
 
@@ -59,7 +71,6 @@ def calc_e(n, phi_n):
             if divisors_i[0] in divisors_prob:
                 listaRem.append(i)
         else:
-            print(divisors_i)
             for j in range(len(divisors_i)):
                 if divisors_i[j] in divisors_prob:
                     if i not in listaRem:
