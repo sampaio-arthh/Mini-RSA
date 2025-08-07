@@ -1,20 +1,33 @@
 #RSA em pequena escala
-
 # encrypter, p, q, decrypter, n,  message
+
+LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+def letterToNumber(text):
+    text = list(text)
+    text = [i.upper() for i in text]
+    text = [i for i in text if i in LETTERS]
+    text = [LETTERS.index(i)+1 for i in text]
+    return text
 
 # Encontra divisores primos de um número n
 def findPrimeDivisors(n):
     primeDivisors = []
-    for i in range(2, n+1):
+    
+    # 2<={i}<=n
+    # Verifica se o número i é divisor de n
+    for i in range(2, n):
         totalDiv = 0
+        
         if n%i == 0:
-            #verifica se o numero é primo
+            # Se {i} divisor de n, então verifica se {i} é primo
             for j in range(2, int(i**0.5)+1):
                 #para testar um número primo, precisamos apenas checar até a raiz quadrada do número
                 if i%j == 0:
-                    totalDiv +=1        
-            totalDiv +=2 #para não rodar desnecessariamente no 1 e no numero(ja sabemos que é divisível)
-            if totalDiv == 2:
+                    totalDiv +=1
+
+            #Se {i} não tem divisores de 2 a n-1, então é primo pois já excluímos 1 e o próprio número
+            if totalDiv == 0:
                 primeDivisors.append(i)
 
     return primeDivisors
@@ -134,8 +147,13 @@ def receberMSG():
     dec = decrypt(d, n, msg)
     print(f"Mensagem desencriptada: {dec}")
 
+ret = letterToNumber("Gol Do VaAasco")
+listaRet = [i for i in ret if i <= len(LETTERS)-1]
+strRet = ""
+for i in range(len(listaRet)):
+    strRet+= str(listaRet[i])+"."
 
-
+# print(f"Mensagem convertida: {strRet}")
 enviarMSG()
 receberMSG()
 
