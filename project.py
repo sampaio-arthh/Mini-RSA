@@ -105,22 +105,51 @@ def decrypt(d, n, enc):
     dec %= n
     return dec
 
-msg = int(input("MSG: "))
+#Loop para enviar ou receber mensagens
+# Variáveis: e, d, n
+#variaveis publicas: e, n
 
-n = int(input("N = "))
-results = calcP_Q(n)
+#enviar
 
-phi_n = phi(n)
+def enviarMSG():
+    msg = int(input("MSG: "))
+    n = int(input("N = "))
+    e = calc_e(n, phi(n))
+    print(f"Possíveis valores de e: {e}")
+    el = int(input("E = e[?]: "))
+    enc = encrypt(e[el], n, msg)
+    print(f"Mensagem encriptada: {enc}")
+    return enc, n
 
-e = calc_e(n, phi_n)
+#receber: usar mensagem recebida, encriptador e n para desencriptar
+def receberMSG():
+    msg = int(input("MSG encriptada: "))
+    n = int(input("N = "))
+    e = calc_e(n, phi(n))
+    print(f"Possíveis valores de e: {e}")
+    el = int(input("E = e[?]: "))
+    d = calc_d(e[el], phi(n))
+    dec = decrypt(d, n, msg)
+    print(f"Mensagem desencriptada: {dec}")
 
-for el in e:
-    enc = encrypt(el, n, msg)
-    d = calc_d(el, phi_n)
+
+
+enviarMSG()
+receberMSG()
+
+# results = calcP_Q(n)
+
+# phi_n = phi(n)
+
+# e = calc_e(n, phi_n)
+
+# for el in e:
+#     enc = encrypt(el, n, msg)
+#     d = calc_d(el, phi_n)
     
 
-    dec = decrypt(d, n, enc)
+#     dec = decrypt(d, n, enc)
 
-    print(f"|e| \t |d| \t |msg| \t |enc| \t |dec|")
-    print(f"|{el}| \t |{d}| \t |{msg}| \t |{enc}| \t |{dec}|")
-    print('\n')
+#     print(f"|e| \t |d| \t |msg| \t |enc| \t |dec|")
+#     print(f"|{el}| \t |{d}| \t |{msg}| \t |{enc}| \t |{dec}|")
+#     print('\n')
