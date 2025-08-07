@@ -46,16 +46,18 @@ def phi(n):
 # Calcula os valores de e que são coprimos com phi(n) e n
 # e deve ser menor que phi(n)
 def calc_e(n, phi_n):
-    numeros = [i for i in range(2, n+1)]
+    numeros2aN = [i for i in range(2, n+1)]
 
     divisors_n = findPrimeDivisors(n)
     divisors_phi_n = findPrimeDivisors(phi_n)
 
     divisors_prob = divisors_phi_n + divisors_n
 
-    for i in divisors_prob:
-        if i in numeros:
-            numeros.remove(i)
+    #Usando o inverso da interseção
+    divisors_prob = set(divisors_prob)
+    numeros2aN = set(numeros2aN)
+
+    numeros2aN.symmetric_difference_update(divisors_prob)
 
     #limpar listas desnecessárias, apagando da memória
     del divisors_n
@@ -64,7 +66,7 @@ def calc_e(n, phi_n):
     listaRem = []
 
     # Verifica se os números restantes são coprimos com phi(n)
-    for i in numeros:
+    for i in numeros2aN:
         divisors_i = findPrimeDivisors(i)
 
         if len(divisors_i) == 1:
@@ -79,10 +81,10 @@ def calc_e(n, phi_n):
         if i < 1 or i > phi_n:
             if i not in listaRem:
                 listaRem.append(i)
-    for i in listaRem:
-        numeros.remove(i)
+    
+    numeros2aN.symmetric_difference_update(set(listaRem))
 
-    return numeros
+    return list(numeros2aN)
 
 def encrypt(e, n, msg):
     enc = msg**e
