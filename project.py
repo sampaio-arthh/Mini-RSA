@@ -1,14 +1,6 @@
-#RSA em pequena escala
-# encrypter, p, q, decrypter, n,  message
-
 LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-def letterToNumber(text):
-    text = list(text)
-    text = [i.upper() for i in text]
-    text = [i for i in text if i in LETTERS]
-    text = [LETTERS.index(i)+1 for i in text]
-    return text
+### Funções do algoritmo RSA
 
 # Encontra divisores primos de um número n
 def findPrimeDivisors(n):
@@ -24,7 +16,8 @@ def findPrimeDivisors(n):
             for j in range(2, int(i**0.5)+1):
                 #para testar um número primo, precisamos apenas checar até a raiz quadrada do número
                 if i%j == 0:
-                    totalDiv +=1
+                    totalDiv += 1
+                    break
 
             #Se {i} não tem divisores de 2 a n-1, então é primo pois já excluímos 1 e o próprio número
             if totalDiv == 0:
@@ -119,24 +112,59 @@ def decrypt(d, n, enc):
     dec = enc**d
     dec %= n
     return dec
+#######
 
-#Loop para enviar ou receber mensagens
-# Variáveis: e, d, n
-#variaveis publicas: e, n
+### Funções extras
+def letterToNumber(text):
+    #para cada letra, verifica se é válida
+    #for letter in text:
+        #if letter.upper() not in LETTERS:
+            #raise ValueError(f"Caractere inválido: {letter}. Apenas letras de A a Z são permitidas.")
+    
+    # Lista para armazenar os números correspondentes
+    textRet = []
+    # Converte cada letra para seu número
+    for letter in text:
+        textRet.append(LETTERS.index(letter.upper()) + 1)
+    return textRet
 
-#enviar
+def numberToLetter(text):
+    #para 2 digitos, se <= 26, então é 1 letra
+    if len(text) % 2 != 0:
+        text = "0" + text  # Adiciona um zero à esquerda se o comprimento for ímpar
+    text = [text[i:i+2] for i in range(0, len(text), 2)]
+    # Converte cada par de números para letras
+    text = [LETTERS[int(i)-1] for i in text]
+    return "".join(text)
 
+
+
+
+#### Ciclo principal do programa
+
+#Enviar: aplicar na mensagem e exibir mensagem encriptada
 def enviarMSG():
-    msg = int(input("MSG: "))
+    msg = input("MSG: ")
     n = int(input("N = "))
     e = calc_e(n, phi(n))
     print(f"Possíveis valores de e: {e}")
-    el = int(input("E = e[?]: "))
-    enc = encrypt(e[el], n, msg)
-    print(f"Mensagem encriptada: {enc}")
-    return enc, n
+    el = int(input("{e} escolhido = e[?]: "))
 
-#receber: usar mensagem recebida, encriptador e n para desencriptar
+    # Converter mensagem para lista de números
+    msg = letterToNumber(msg)
+    result = ""
+    for i in range(len(msg)):
+        enc = encrypt(e[el], n, msg[i])
+        # Converter mensagem encriptada para letras
+        enc = str(enc)
+        enc = numberToLetter(enc)
+        result+=enc    
+
+    print(f"Mensagem encriptada: \"{result}\" | e:{e} | n:{n}")
+
+
+
+#Receber: aplicar na mensagem encriptada e exibir mensagem desencriptada
 def receberMSG():
     msg = int(input("MSG encriptada: "))
     n = int(input("N = "))
@@ -147,13 +175,6 @@ def receberMSG():
     dec = decrypt(d, n, msg)
     print(f"Mensagem desencriptada: {dec}")
 
-ret = letterToNumber("Gol Do VaAasco")
-listaRet = [i for i in ret if i <= len(LETTERS)-1]
-strRet = ""
-for i in range(len(listaRet)):
-    strRet+= str(listaRet[i])+"."
-
-# print(f"Mensagem convertida: {strRet}")
 enviarMSG()
 receberMSG()
 
