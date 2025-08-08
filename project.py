@@ -1,3 +1,5 @@
+import tkinter as tk
+
 LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 ### Funções do algoritmo RSA
@@ -138,8 +140,6 @@ def numberToLetter(text):
     return "".join(text)
 
 
-
-
 #### Ciclo principal do programa
 
 #Enviar: aplicar na mensagem e exibir mensagem encriptada
@@ -175,22 +175,45 @@ def receberMSG():
     dec = decrypt(d, n, msg)
     print(f"Mensagem desencriptada: {dec}")
 
-enviarMSG()
-receberMSG()
 
-# results = calcP_Q(n)
+##GUI
+#base
+ROOT_L = 1000
+ROOT_A = 800
 
-# phi_n = phi(n)
+root = tk.Tk()
 
-# e = calc_e(n, phi_n)
+#classe para padronizar a GUI e seus itens
 
-# for el in e:
-#     enc = encrypt(el, n, msg)
-#     d = calc_d(el, phi_n)
-    
+class JanelaPrincipal:
+    def __init__(self, root, name):
+        self.tela = root
+        self.tela.geometry(f"{ROOT_L}x{ROOT_A}")
+        self.tela.title(name)
 
-#     dec = decrypt(d, n, enc)
+        self.labelEscolha = tk.Label(self.tela, text="Qual função deseja executar ?")
+        self.labelEscolha.pack(pady=20)
 
-#     print(f"|e| \t |d| \t |msg| \t |enc| \t |dec|")
-#     print(f"|{el}| \t |{d}| \t |{msg}| \t |{enc}| \t |{dec}|")
-#     print('\n')
+        self.buttonEscolhaEnc = tk.Button(self.tela, command=JanelaEnc(root, "Tela Encriptar"))
+        self.buttonEscolhaEnc.pack(padx=10)
+
+        self.buttonEscolhaDec = tk.Button(self.tela, anchor="center", command=JanelaDec(root, "Tela Decriptar"))
+        
+        self.tela.mainloop()
+
+
+class JanelaEnc:
+    def __init__(self, root, name):
+        self.tela = root
+        self.tela.title(name)
+        self.labelMensagem = tk.Label(self.tela)
+        self.entryMensagem = tk.Entry(self.tela, width=80)
+
+class JanelaDec:
+    def __init__(self, root, name):
+        self.tela = root
+        self.tela.title(name)
+        self.labelMensagem = tk.Label(self.tela)
+        self.entryMensagem = tk.Entry(self.tela, width=80)
+
+JanelaPrincipal(root, "RSA")
