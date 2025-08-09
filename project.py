@@ -1,4 +1,4 @@
-import tkinter as tk
+import tkinter as tk    
 
 LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -178,12 +178,10 @@ def receberMSG():
 
 ##GUI
 #base
-ROOT_L = 1000
-ROOT_A = 800
+ROOT_L = 400
+ROOT_A = 400
 
 root = tk.Tk()
-
-#classe para padronizar a GUI e seus itens
 
 class JanelaPrincipal:
     def __init__(self, root, name):
@@ -191,29 +189,60 @@ class JanelaPrincipal:
         self.tela.geometry(f"{ROOT_L}x{ROOT_A}")
         self.tela.title(name)
 
-        self.labelEscolha = tk.Label(self.tela, text="Qual função deseja executar ?")
-        self.labelEscolha.pack(pady=20)
+        #Configuração cabeçalho
+        self.barraMenu = tk.Menu(self.tela)
+        self.tela.config(menu=self.barraMenu)
 
-        self.buttonEscolhaEnc = tk.Button(self.tela, command=JanelaEnc(root, "Tela Encriptar"))
-        self.buttonEscolhaEnc.pack(padx=10)
+        #Configuração conteúdo
+        self.titleText = None
+        self.introText = None
+        self.studyText = None
+        self.creditText = None
 
-        self.buttonEscolhaDec = tk.Button(self.tela, anchor="center", command=JanelaDec(root, "Tela Decriptar"))
+        #Para evitar sobreposição e repetição desnecessária de elementos
+        def preencherHome(self):
+            if self.titleText == None:
+                self.titleText = tk.Label(self.tela, text="Mini RSA", font=("Arial", 14, "bold"), fg="#65A1FA")
+                self.titleText.place(relx=0.5, rely=0.1, anchor="center")
+
+                texto = "Aplicação do modelo matemático de criptografia RSA\n"
+                self.introText = tk.Label(self.tela, text=texto, font=("Arial", 12, "normal"))
+                self.introText.place(relx=0.5, rely=0.3, anchor="center")
+                
+                texto="Hora de colocar os estudos em prática"
+                self.studyText = tk.Label(self.tela, text=texto, font=("Arial", 12, "italic"))
+                self.studyText.place(relx=0.5, rely=0.4, anchor="center")
+
+                self.creditText = tk.Label(self.tela, text="github: sampaio-arthh", fg="#562A88", font=("Aria", 12, "normal"))
+                self.creditText.pack(pady=20, side="bottom")
+
+        preencherHome(self)
+        elementsToClear = [self.titleText, self.introText, self.studyText, self.creditText]
+        
+        #Terminando menu com elementos definidos
+        self.barraMenu.add_command(label="Home", command=lambda: preencherHome(self)) #função lambda pois precisamos passar valores
+        self.barraMenu.add_command(label="Encriptar", command=lambda: self.JanelaEnc("Encriptar", elementsToClear)) #função lambda pois precisamos passar valores
+        self.barraMenu.add_command(label="Desencriptar", command=lambda: self.JanelaDec("Desencriptar")) #função lambda pois precisamos passar valores
         
         self.tela.mainloop()
-
-
-class JanelaEnc:
-    def __init__(self, root, name):
-        self.tela = root
+        
+    def JanelaEnc(self, name, elementsToClear):
         self.tela.title(name)
-        self.labelMensagem = tk.Label(self.tela)
-        self.entryMensagem = tk.Entry(self.tela, width=80)
 
-class JanelaDec:
-    def __init__(self, root, name):
-        self.tela = root
+        for el in elementsToClear:
+            el.destroy()
+        self.titleText = None
+ 
+
+    def JanelaDec(self, name):
         self.tela.title(name)
-        self.labelMensagem = tk.Label(self.tela)
-        self.entryMensagem = tk.Entry(self.tela, width=80)
+
+        self.introText.destroy()
+        self.introText = None
+        self.studyText.destroy()
+        self.studyText = None
+        self.creditText.destroy()
+        self.creditText = None
+
 
 JanelaPrincipal(root, "RSA")
