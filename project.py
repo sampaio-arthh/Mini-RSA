@@ -185,6 +185,9 @@ root = tk.Tk()
 
 class JanelaPrincipal:
     def __init__(self, root, name):
+        """Construtor da classe"""
+
+        #Configurações base da tela
         self.tela = root
         self.tela.geometry(f"{ROOT_L}x{ROOT_A}")
         self.tela.title(name)
@@ -192,15 +195,29 @@ class JanelaPrincipal:
         #Configuração cabeçalho
         self.barraMenu = tk.Menu(self.tela)
         self.tela.config(menu=self.barraMenu)
+        self.barraMenu.add_command(label="Home", command=lambda: preencherHome(self))
+        self.barraMenu.add_command(label="Encriptar", command=lambda: self.telaEnc())
+        self.barraMenu.add_command(label="Desencriptar", command=lambda: self.telaDec())
 
-        #Configuração conteúdo
+        #Configuração conteúdo home
         self.titleText = None
         self.introText = None
         self.studyText = None
         self.creditText = None
 
-        #Para evitar sobreposição e repetição desnecessária de elementos
+        #Configuração conteúdo da aba Encriptar
+        self.label1Enc = None
+        self.bCont1Enc = None
+        self.button1Enc = None
+        self.button2Enc = None
+        self.entryMsg = None
+
+        self.elementsToClear = ["titleText", "introText", "studyText", "creditText", "label1Enc", "bCont1Enc", "button1Enc", "button2Enc"]
+
         def preencherHome(self):
+            """Preencher tela inicial apenas com seus elementos sem duplicatas"""
+            self.clearScreen()
+            
             if self.titleText == None:
                 self.titleText = tk.Label(self.tela, text="Mini RSA", font=("Arial", 14, "bold"), fg="#65A1FA")
                 self.titleText.place(relx=0.5, rely=0.1, anchor="center")
@@ -214,35 +231,62 @@ class JanelaPrincipal:
                 self.studyText.place(relx=0.5, rely=0.4, anchor="center")
 
                 self.creditText = tk.Label(self.tela, text="github: sampaio-arthh", fg="#562A88", font=("Aria", 12, "normal"))
-                self.creditText.pack(pady=20, side="bottom")
+                self.creditText.place(relx=0.5, rely=0.9, anchor="center")
 
         preencherHome(self)
-        elementsToClear = [self.titleText, self.introText, self.studyText, self.creditText]
-        
-        #Terminando menu com elementos definidos
-        self.barraMenu.add_command(label="Home", command=lambda: preencherHome(self)) #função lambda pois precisamos passar valores
-        self.barraMenu.add_command(label="Encriptar", command=lambda: self.JanelaEnc("Encriptar", elementsToClear)) #função lambda pois precisamos passar valores
-        self.barraMenu.add_command(label="Desencriptar", command=lambda: self.JanelaDec("Desencriptar")) #função lambda pois precisamos passar valores
-        
+
         self.tela.mainloop()
+
+    def clearScreen(self):
+            """Apagar elementos e resetar seus valores para evitar duplicatas"""
+            # ^ lista de todos os atributos em tela (manter atualizado)
+            for el in self.elementsToClear:
+                elemento = getattr(self, el) #busque o valor do atributo
+                if elemento is not None: #se o atributo está ativo:
+                    elemento.destroy() #exclua-o da tela
+                    setattr(self, el, None) #atributo = None (passa na verificação do 'preencher' respectivo)
+
+    def atualizarEnc(self, type):
+        if self.entryMsg != None:
+            self.entryMsg.destroy()
+
+        #Configurando entry para tarefa específica
+        if type==1:
+            if self.entryMsg != tk.Entry(bg="#EAF9FA"):
+                self.entryMsg = tk.Entry(bg="#EAF9FA")
+
+        else:
+            if self.entryMsg != tk.Entry(bg="#DBE4FD"):
+                self.entryMsg = tk.Entry(bg="#DBE4FD")
         
-    def JanelaEnc(self, name, elementsToClear):
-        self.tela.title(name)
+        self.entryMsg.pack(pady=10)
 
-        for el in elementsToClear:
-            el.destroy()
-        self.titleText = None
+    def telaEnc(self):
+        self.clearScreen()
+
+        self.label1Enc = tk.Label(self.tela, text="Escolha o tipo de mensagem a enviar (Número ou String)")
+        self.label1Enc.pack(pady=10, padx=5)
+
+        self.bCont1Enc = tk.Button(self.tela, background="#DBDBDB", border=0, state="disabled")
+        self.bCont1Enc.pack(anchor="n", padx=5, ipady=5)
+
+        self.button1Enc = tk.Button(self.tela, text="Número", width=10, command=lambda: self.atualizarEnc(1))
+        self.button1Enc.pack(
+            anchor="w",
+            side="left",
+            padx=5,
+            in_=self.bCont1Enc)
+        
+        self.button2Enc = tk.Button(self.tela, text="Texto", width=10, command=lambda: self.atualizarEnc(2))
+        self.button2Enc.pack(
+            after=self.button1Enc,
+            side="right",
+            padx=5,
+            in_=self.bCont1Enc)
+        
  
-
-    def JanelaDec(self, name):
-        self.tela.title(name)
-
-        self.introText.destroy()
-        self.introText = None
-        self.studyText.destroy()
-        self.studyText = None
-        self.creditText.destroy()
-        self.creditText = None
+    def telaDec(self):
+        self.clearScreen(["titleText", "introText", "studyText", "creditText"])  
 
 
 JanelaPrincipal(root, "RSA")
